@@ -1,0 +1,7 @@
+node_modules/
+.env
+site.db
+site.db-shm
+site.db-wal
+.DS_Store
+npm-debug.log*
