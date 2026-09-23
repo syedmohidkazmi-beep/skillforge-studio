@@ -24,13 +24,14 @@ const sessionMiddleware = session({
   cookie: { httpOnly: true, sameSite: 'lax', secure: process.env.NODE_ENV === 'production', maxAge: 43200000 }
 });
 app.set('trust proxy', 1);
+app.set('etag', false);
 app.use(helmet({ contentSecurityPolicy: false, crossOriginEmbedderPolicy: false }));
 app.use(compression());
 app.use(express.json({ limit: '1mb' }));
 app.use(cookieParser());
 app.use(sessionMiddleware);
 app.use(express.static('public', { maxAge: process.env.NODE_ENV === 'production' ? '1h' : 0 }));
-app.use('/api', (_req,res,next) => { res.set('Cache-Control','no-store, no-cache, must-revalidate, proxy-revalidate'); res.set('Pragma','no-cache'); res.set('Expires','0'); next(); });
+app.use('/api', (req,res,next) => { delete req.headers['if-none-match']; delete req.headers['if-modified-since']; res.set('Cache-Control','no-store, no-cache, must-revalidate, proxy-revalidate'); res.set('Pragma','no-cache'); res.set('Expires','0'); next(); });
 io.engine.use(sessionMiddleware);
 
 const loginLimit = rateLimit({ windowMs: 900000, limit: 10, standardHeaders: true, legacyHeaders: false });
