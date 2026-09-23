@@ -104,6 +104,9 @@ app.post('/api/admin/resources', admin, (req,res) => {
 app.delete('/api/admin/resources/:id', admin, (req,res) => { db.prepare('DELETE FROM resources WHERE id=?').run(Number(req.params.id)); res.json({ok:true}); });
 app.put('/api/admin/messages/:id/read', admin, (req,res) => { db.prepare('UPDATE messages SET read_at=CURRENT_TIMESTAMP WHERE id=?').run(Number(req.params.id)); res.json({ok:true}); });
 
+app.get(['/admin','/admin/'], (_req,res) => res.sendFile('admin.html',{root:'public'}));
+app.use((_req,res) => res.sendFile('index.html',{root:'public'}));
+
 io.on('connection', socket => {
   socket.on('presence:join', data => {
     const visitorId = clean(data?.visitorId,64) || 'visitor';
