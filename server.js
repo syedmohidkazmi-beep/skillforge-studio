@@ -30,7 +30,7 @@ app.use(compression());
 app.use(express.json({ limit: '1mb' }));
 app.use(cookieParser());
 app.use(sessionMiddleware);
-app.use(express.static('public', { maxAge: process.env.NODE_ENV === 'production' ? '1h' : 0 }));
+app.use(express.static('public', { maxAge: 0, setHeaders: res => res.setHeader('Cache-Control','no-store, no-cache, must-revalidate') }));
 app.use('/api', (req,res,next) => { delete req.headers['if-none-match']; delete req.headers['if-modified-since']; res.set('Cache-Control','no-store, no-cache, must-revalidate, proxy-revalidate'); res.set('Pragma','no-cache'); res.set('Expires','0'); next(); });
 io.engine.use(sessionMiddleware);
 
